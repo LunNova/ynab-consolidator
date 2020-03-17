@@ -10,6 +10,13 @@ from ynab import AccountsApi, BudgetDetailResponse, CategoriesApi, TransactionsA
 from ynab import ApiClient, BudgetsApi, MonthsApi, Account, BudgetDetail
 
 
+def make_prefix(budget_name):
+    parts = budget_name.split()
+    if len(parts) == 1:
+        return budget_name
+    return f"{''.join([word[0] for word in parts])} "
+
+
 class Client:
     def __init__(self, api_key):
         configuration = ynab.Configuration()
@@ -42,7 +49,7 @@ class Client:
             budget_name = budget["name"]
             currency = budget["currency_format"]["iso_code"]
             accs: List[Account] = accounts_api.get_accounts(budget_id).data["accounts"]
-            prefix = f"{''.join([word[0] for word in budget_name.split()])} "
+            prefix = make_prefix(budget_name)
             print(f"{budget_name} {currency}")
             for acc in accs:
                 name = acc["name"]
